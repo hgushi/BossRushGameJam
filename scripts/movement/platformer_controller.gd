@@ -5,11 +5,15 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 
 # Exports
 @export var move_speed : float = 300.0
-@export var coyote_time : float = 1.0
+@export var coyote_time : float = 0.2
 @export var jump_buffer_time : float = 0.5
 @export var jump : BaseJump
+@export var can_dash : bool = true
+@export var is_dashing : bool = false
+@export var is_touching_floor : bool = false
 
 # Private variables
+var dash_boost : float = 500.0
 var _is_coyote_time : bool = false
 var _is_jump_buffered : bool = false
 @onready var _coyote_time_tween : Tween = create_tween()
@@ -54,6 +58,7 @@ func _physics_process(delta):
 	
 	_apply_gravity(delta)
 	_apply_jump()
+	_apply_dash()
 	_apply_movement(delta)
 
 func _check_floor():
@@ -75,20 +80,34 @@ func _check_wall():
 	_is_on_wall = is_on_wall()
 
 func _apply_gravity(delta):
-	if not _is_on_floor:
+	if not _is_on_floor and !is_dashing:
 		velocity.y += gravity * delta
 
 func _apply_movement(_delta):
 	var direction = Input.get_axis("move_left", "move_right")
-	if direction:
+	
+	if direction and !is_dashing:
 		velocity.x = direction * move_speed
-	else:
+	elif !direction and !is_dashing:
 		velocity.x = move_toward(velocity.x, 0, move_speed)
 
 	if _is_on_floor:
 		on_move_ground.emit()
 	
 	move_and_slide()
+
+func _apply_dash():
+	if Input.is_action_just_pressed("dash") and can_dash and !is_touching_floor:
+		var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
+		if (!direction):
+			return
+		can_dash = false
+		is_dashing = true
+		velocity = direction * dash_boost
+		await get_tree().create_timer(0.15).timeout
+		# reset velocity after dash
+		velocity = Vector2(0, 0)
+		is_dashing = false
 
 func _apply_jump():
 	if Input.is_action_just_pressed("jump") or (_is_jump_buffered and _is_on_floor):
@@ -103,9 +122,13 @@ func _apply_jump():
 		on_jump_end.emit()
 
 func _on_touch_floor():
+	is_touching_floor = true
+	if !can_dash:
+		can_dash = true
 	_stop_coyote_time()
 	
 func _on_leave_floor():
+	is_touching_floor = false
 	if velocity.y >= 0.0:
 		_start_coyote_time()
 
