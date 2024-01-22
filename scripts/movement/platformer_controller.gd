@@ -11,14 +11,16 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var can_dash : bool = true
 @export var is_dashing : bool = false
 @export var is_touching_floor : bool = false
+@export var dash_boost : float = 500.0
+@export var _is_on_floor : bool = is_on_floor()
+@export var dash_cooldown_time : float = 1.0
+@export var dash_casting_time : float = 0.15
 
 # Private variables
-var dash_boost : float = 500.0
 var _is_coyote_time : bool = false
 var _is_jump_buffered : bool = false
 @onready var _coyote_time_tween : Tween = create_tween()
 @onready var _jump_buffer_tween : Tween = create_tween()
-@onready var _is_on_floor : bool = is_on_floor()
 @onready var _is_on_wall : bool = is_on_wall()
 
 signal on_move_ground()
@@ -96,18 +98,31 @@ func _apply_movement(_delta):
 	
 	move_and_slide()
 
+func dash_casting():
+	await get_tree().create_timer(dash_casting_time).timeout
+	# reset velocity after dash
+	velocity = Vector2(0, 0)
+	is_dashing = false
+
+func dash_cooldown():
+	await get_tree().create_timer(dash_cooldown_time).timeout
+	can_dash = true
+
 func _apply_dash():
-	if Input.is_action_just_pressed("dash") and can_dash and !is_touching_floor:
+	if Input.is_action_just_pressed("dash") and can_dash:
 		var direction = Input.get_vector("move_left", "move_right", "move_up", "move_down")
 		if (!direction):
 			return
 		can_dash = false
 		is_dashing = true
 		velocity = direction * dash_boost
-		await get_tree().create_timer(0.15).timeout
-		# reset velocity after dash
-		velocity = Vector2(0, 0)
-		is_dashing = false
+		
+		var callable_cooldown = Callable(self, "dash_cooldown")
+		callable_cooldown.call()
+		
+		var callable_casting = Callable(self, "dash_casting")
+		callable_casting.call()
+		
 
 func _apply_jump():
 	if Input.is_action_just_pressed("jump") or (_is_jump_buffered and _is_on_floor):
@@ -123,8 +138,6 @@ func _apply_jump():
 
 func _on_touch_floor():
 	is_touching_floor = true
-	if !can_dash:
-		can_dash = true
 	_stop_coyote_time()
 	
 func _on_leave_floor():
