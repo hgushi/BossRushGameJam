@@ -1,8 +1,8 @@
-[gd_scene load_steps=24 format=3 uid="uid://dnlir14iywfl8"]
+[gd_scene load_steps=36 format=3 uid="uid://dnlir14iywfl8"]
 
 [ext_resource type="Script" path="res://scripts/movement/platformer_controller.gd" id="1_mox32"]
 [ext_resource type="Script" path="res://scripts/movement/base_jump.gd" id="2_4mo5d"]
-[ext_resource type="Texture2D" uid="uid://bvtsxwnb2ou8v" path="res://sprites/shapes/circle.png" id="3_hxg5w"]
+[ext_resource type="Texture2D" uid="uid://be2n41uajk7kq" path="res://sprites/izanagi/Training Dummy Sprite Sheet.png" id="4_8xuoc"]
 [ext_resource type="Script" path="res://scripts/interaction/interactor.gd" id="4_18t1y"]
 
 [sub_resource type="Resource" id="Resource_j6tkt"]
@@ -15,68 +15,122 @@ jump_speed = 300.0
 
 [sub_resource type="Animation" id="Animation_apdon"]
 length = 0.001
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Circle:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_da4bg"]
 resource_name = "air"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath("Circle:modulate")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0),
-"transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 0, 0, 1)]
-}
 
 [sub_resource type="Animation" id="Animation_1sudq"]
 resource_name = "idle"
+loop_mode = 1
+step = 0.125
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Circle:modulate")
+tracks/0/path = NodePath("Sprite2D:texture")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(1, 1, 1, 1)]
+"update": 1,
+"values": [ExtResource("4_8xuoc")]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:hframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [8]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:vframes")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Sprite2D:frame_coords")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(),
+"transitions": PackedFloat32Array(),
+"update": 1,
+"values": []
+}
+tracks/4/type = "value"
+tracks/4/imported = false
+tracks/4/enabled = true
+tracks/4/path = NodePath("Sprite2D:frame")
+tracks/4/interp = 1
+tracks/4/loop_wrap = true
+tracks/4/keys = {
+"times": PackedFloat32Array(0, 0.25, 0.5, 0.75),
+"transitions": PackedFloat32Array(1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3]
 }
 
 [sub_resource type="Animation" id="Animation_l2lhe"]
 resource_name = "moving"
+
+[sub_resource type="Animation" id="Animation_dy525"]
+resource_name = "basic_attack"
 tracks/0/type = "value"
 tracks/0/imported = false
 tracks/0/enabled = true
-tracks/0/path = NodePath("Circle:modulate")
+tracks/0/path = NodePath("Sprite2D:hframes")
 tracks/0/interp = 1
 tracks/0/loop_wrap = true
 tracks/0/keys = {
 "times": PackedFloat32Array(0),
 "transitions": PackedFloat32Array(1),
-"update": 0,
-"values": [Color(0, 1, 0, 1)]
+"update": 1,
+"values": [8]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Sprite2D:vframes")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [3]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath("Sprite2D:frame")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.2, 0.4, 0.6, 0.8),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1),
+"update": 1,
+"values": [8, 9, 10, 11, 12]
 }
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_6rfy8"]
 _data = {
 "RESET": SubResource("Animation_apdon"),
 "air": SubResource("Animation_da4bg"),
+"basic_attack": SubResource("Animation_dy525"),
 "idle": SubResource("Animation_1sudq"),
 "moving": SubResource("Animation_l2lhe")
 }
@@ -128,19 +182,96 @@ states/air/position = Vector2(437, -40)
 transitions = ["Start", "Moving", SubResource("AnimationNodeStateMachineTransition_6fcuo"), "Moving", "air", SubResource("AnimationNodeStateMachineTransition_7caxq"), "air", "Moving", SubResource("AnimationNodeStateMachineTransition_ybbcq")]
 graph_offset = Vector2(-75, -194)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_spir4"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(0, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qikkc"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(32, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d0wdy"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(64, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pv8wp"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(96, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_xxf8w"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(128, 32, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7e1tr"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gkpna"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_sh8y0"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0wgr"]
+atlas = ExtResource("4_8xuoc")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nusve"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_spir4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qikkc")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d0wdy")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pv8wp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_xxf8w")
+}],
+"loop": false,
+"name": &"basic_attack",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7e1tr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gkpna")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_sh8y0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0wgr")
+}],
+"loop": true,
+"name": &"izanagi_idle",
+"speed": 4.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_wox47"]
+size = Vector2(13, 26)
+
 [node name="platformer_character" type="CharacterBody2D"]
 position = Vector2(191, 65)
 script = ExtResource("1_mox32")
 jump = SubResource("Resource_j6tkt")
 
-[node name="Circle" type="Sprite2D" parent="."]
-scale = Vector2(0.284, 0.284)
-texture = ExtResource("3_hxg5w")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
 shape = SubResource("CapsuleShape2D_t52sc")
 
 [node name="use_interactor" type="Area2D" parent="." groups=["player"]]
+visible = false
 script = ExtResource("4_18t1y")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="use_interactor"]
@@ -150,9 +281,36 @@ shape = SubResource("RectangleShape2D_kapla")
 libraries = {
 "": SubResource("AnimationLibrary_6rfy8")
 }
+autoplay = "idle"
 
 [node name="AnimationTree" type="AnimationTree" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_6rfy8")
+}
 tree_root = SubResource("AnimationNodeStateMachine_s0ab6")
-anim_player = NodePath("../AnimationPlayer")
 advance_expression_base_node = NodePath("..")
-active = true
+anim_player = NodePath("../AnimationPlayer")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_nusve")
+animation = &"izanagi_idle"
+frame_progress = 0.858111
+
+[node name="AttackArea" type="Area2D" parent="." groups=["Sword"]]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea"]
+position = Vector2(9.5, 1)
+shape = SubResource("RectangleShape2D_wox47")
+disabled = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture_filter = 1
+texture = ExtResource("4_8xuoc")
+hframes = 8
+vframes = 3
+frame = 3
+
+[connection signal="animation_finished" from="AnimatedSprite2D" to="." method="_on_animated_sprite_2d_animation_finished"]

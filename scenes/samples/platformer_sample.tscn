@@ -1,4 +1,4 @@
-[gd_scene load_steps=31 format=3 uid="uid://tqr8mcs2r0kr"]
+[gd_scene load_steps=32 format=3 uid="uid://tqr8mcs2r0kr"]
 
 [ext_resource type="PackedScene" uid="uid://ds4pyjrrj8npy" path="res://scenes/common/ui/dialog_box.tscn" id="1_lp2vr"]
 [ext_resource type="Theme" uid="uid://byds11vsd6ber" path="res://themes/pixelart/pixelart.tres" id="3_3nvoo"]
@@ -11,6 +11,7 @@
 [ext_resource type="Script" path="res://scripts/camera/camera_area_targeter.gd" id="7_60w6n"]
 [ext_resource type="PackedScene" uid="uid://dnlir14iywfl8" path="res://scenes/common/simple_platformer_character.tscn" id="7_y5jga"]
 [ext_resource type="Resource" path="res://game_resources/camera_area_entered_event.tres" id="8_3ebwk"]
+[ext_resource type="PackedScene" uid="uid://dkkcj0s5yinmr" path="res://scenes/common/base_projectile.tscn" id="8_xjxk1"]
 [ext_resource type="Script" path="res://scripts/interaction/dialog/dialog_interactable.gd" id="9_xhclb"]
 [ext_resource type="Texture2D" uid="uid://bi7fkmg3oosb7" path="res://sprites/shapes/square.png" id="10_e8em0"]
 [ext_resource type="PackedScene" uid="uid://c73mpiglgnsfd" path="res://scenes/common/camera/camera_area.tscn" id="11_xajsl"]
@@ -172,6 +173,7 @@ sources/0 = SubResource("TileSetAtlasSource_variq")
 [node name="platformer_sample" type="Node"]
 
 [node name="ui" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="inventory_menu" type="Control" parent="ui"]
 layout_mode = 3
@@ -248,8 +250,9 @@ script = ExtResource("6_3um2p")
 viewport = NodePath("../../../minimap_viewport")
 
 [node name="camera_player" type="Camera2D" parent="."]
+visible = false
 position = Vector2(224, -27)
-zoom = Vector2(2, 2)
+zoom = Vector2(2.975, 2.975)
 editor_draw_limits = true
 
 [node name="CameraTargeter" type="Node" parent="camera_player" node_paths=PackedStringArray("camera")]
@@ -261,6 +264,7 @@ margin = Vector2(0, 0)
 targets = Array[NodePath]([NodePath("../../platformer_character")])
 
 [node name="help_text" type="Node2D" parent="."]
+visible = false
 position = Vector2(41, 25)
 
 [node name="Label" type="Label" parent="help_text"]
@@ -272,7 +276,10 @@ offset_bottom = 30.0
 theme = ExtResource("3_3nvoo")
 text = "Press E to talk"
 
+[node name="base_projectile" parent="help_text/Label" instance=ExtResource("8_xjxk1")]
+
 [node name="dialog_interactable" type="Area2D" parent="." node_paths=PackedStringArray("dialog_box")]
+visible = false
 position = Vector2(68, 69)
 script = ExtResource("9_xhclb")
 dialog_box = NodePath("../ui/dialog_box")
@@ -287,24 +294,30 @@ scale = Vector2(0.2, 0.2)
 texture = ExtResource("10_e8em0")
 
 [node name="platformer_character" parent="." groups=["Saveable"] instance=ExtResource("7_y5jga")]
+texture_filter = 1
 position = Vector2(224, -27)
 
 [node name="camera_area 1" parent="." instance=ExtResource("11_xajsl")]
+visible = false
 position = Vector2(22, -2)
 collision_layer = 8
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="camera_area 1"]
+visible = false
 position = Vector2(31.5, 0)
 shape = SubResource("RectangleShape2D_fpma6")
 
 [node name="camera_area 2" parent="." instance=ExtResource("11_xajsl")]
+visible = false
 position = Vector2(22, -2)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="camera_area 2"]
+visible = false
 position = Vector2(534, 0)
 shape = SubResource("RectangleShape2D_fpma6")
 
 [node name="TileMap" type="TileMap" parent="."]
+visible = false
 visibility_layer = 3
 tile_set = SubResource("TileSet_hym1m")
 format = 2
@@ -313,6 +326,7 @@ layer_0/tile_data = PackedInt32Array(655379, 0, 0, 720915, 0, 0, 786451, 0, 0, 8
 [node name="minimap_viewport" parent="." instance=ExtResource("6_147y0")]
 
 [node name="camera_minimap" type="Camera2D" parent="minimap_viewport"]
+visible = false
 top_level = true
 z_index = -100
 position = Vector2(-1.04, 0)
@@ -321,3 +335,6 @@ position = Vector2(-1.04, 0)
 script = ExtResource("7_60w6n")
 camera = NodePath("..")
 area_entered_even = ExtResource("8_3ebwk")
+
+[node name="base_projectile" parent="." instance=ExtResource("8_xjxk1")]
+position = Vector2(90, 47)

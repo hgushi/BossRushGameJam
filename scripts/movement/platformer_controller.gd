@@ -10,6 +10,7 @@ var gravity = ProjectSettings.get_setting("physics/2d/default_gravity")
 @export var jump : BaseJump
 @export var can_dash : bool = true
 @export var is_dashing : bool = false
+@export var is_attacking : bool = false
 @export var is_touching_floor : bool = false
 
 # Private variables
@@ -20,6 +21,7 @@ var _is_jump_buffered : bool = false
 @onready var _jump_buffer_tween : Tween = create_tween()
 @onready var _is_on_floor : bool = is_on_floor()
 @onready var _is_on_wall : bool = is_on_wall()
+@onready var sprite = $Sprite2D
 
 signal on_move_ground()
 signal on_jump_start()
@@ -51,14 +53,15 @@ func _ready():
 		func() : _is_jump_buffered = false
 	)
 	_jump_buffer_tween.stop()
+	#$AnimatedSprite2D.play("izanagi_idle")
 
 func _physics_process(delta):
 	_check_floor()
 	_check_wall()
-	
 	_apply_gravity(delta)
 	_apply_jump()
 	_apply_dash()
+	_apply_basic_attack()
 	_apply_movement(delta)
 
 func _check_floor():
@@ -90,6 +93,7 @@ func _apply_movement(_delta):
 		velocity.x = direction * move_speed
 	elif !direction and !is_dashing:
 		velocity.x = move_toward(velocity.x, 0, move_speed)
+		#sprite.flip_h = (direction == -1)
 
 	if _is_on_floor:
 		on_move_ground.emit()
@@ -108,6 +112,12 @@ func _apply_dash():
 		# reset velocity after dash
 		velocity = Vector2(0, 0)
 		is_dashing = false
+		
+func _apply_basic_attack():
+	if Input.is_action_just_pressed("basic_attack") && is_attacking == false:
+		$AnimatedSprite2D.play("basic_attack")
+		$AttackArea/CollisionShape2D.disabled = false
+		is_attacking = true
 
 func _apply_jump():
 	if Input.is_action_just_pressed("jump") or (_is_jump_buffered and _is_on_floor):
@@ -157,3 +167,9 @@ func _start_jump_buffer():
 func _stop_jump_buffer():
 	_is_jump_buffered = false
 	_jump_buffer_tween.stop()
+
+
+func _on_animated_sprite_2d_animation_finished():
+	if $AnimatedSprite2D.animation == "basic_attack":
+		$AttackArea/CollisionShape2D.disabled = true
+		is_attacking = false

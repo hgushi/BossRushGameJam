@@ -1,0 +1,50 @@
+[gd_scene load_steps=8 format=3 uid="uid://dkkcj0s5yinmr"]
+
+[ext_resource type="Script" path="res://scripts/interaction/hit/hitbox.gd" id="1_1rt2d"]
+[ext_resource type="Texture2D" uid="uid://q27iuworaagk" path="res://sprites/test/sprite_fx___projectiles_by_bongwater_bandit_d9phh0a.png" id="2_jnqkx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l0dwv"]
+atlas = ExtResource("2_jnqkx")
+region = Rect2(23, 21, 19, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a68p0"]
+atlas = ExtResource("2_jnqkx")
+region = Rect2(42, 21, 19, 20)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mqije"]
+atlas = ExtResource("2_jnqkx")
+region = Rect2(61, 21, 19, 20)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_tkb0m"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l0dwv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a68p0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mqije")
+}],
+"loop": true,
+"name": &"projectile_idle",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_ug6y6"]
+size = Vector2(17, 14)
+
+[node name="base_projectile" type="Area2D"]
+script = ExtResource("1_1rt2d")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_tkb0m")
+animation = &"projectile_idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-0.5, 1)
+shape = SubResource("RectangleShape2D_ug6y6")
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
